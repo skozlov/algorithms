@@ -17,6 +17,11 @@ class SortTest {
         test(MergeSort.INSTANCE);
     }
 
+    @Test
+    void heapSort(){
+        test(HeapSort.INSTANCE);
+    }
+
     private void test(InPlaceSort sort) {
         test(sort.toFunctional());
     }
