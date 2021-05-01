@@ -15,6 +15,18 @@ public class Slice<T> {
         this.endIndexExclusive = endIndexExclusive;
     }
 
+    public T[] getArray() {
+        return array;
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public int getEndIndexExclusive() {
+        return endIndexExclusive;
+    }
+
     public int getSize() {
         return endIndexExclusive - startIndex;
     }

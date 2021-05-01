@@ -16,4 +16,10 @@ public class ArrayUtils {
         arraycopy(source, 0, target, 0, source.length);
         return target;
     }
+
+    public static <T> void swap(T[] array, int i, int j) {
+        var buf = array[i];
+        array[i] = array[j];
+        array[j] = buf;
+    }
 }

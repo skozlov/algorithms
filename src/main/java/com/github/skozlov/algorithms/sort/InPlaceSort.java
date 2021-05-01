@@ -7,6 +7,10 @@ import java.util.Comparator;
 public interface InPlaceSort {
     <T> void sortInPlace(T[] elements, Comparator<T> comparator);
 
+    default <T extends Comparable<? super T>> void sortInPlace(T[] elements) {
+        sortInPlace(elements, Comparator.naturalOrder());
+    }
+
     default FunctionalSort toFunctional() {
         return new FunctionalSort() {
             @Override

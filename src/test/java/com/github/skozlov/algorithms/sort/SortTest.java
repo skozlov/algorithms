@@ -22,6 +22,13 @@ class SortTest {
         test(HeapSort.INSTANCE);
     }
 
+    @Test
+    void quickSort(){
+        test(new QuickSort(QuickSort.PIVOT_FIRST));
+        test(new QuickSort(QuickSort.PIVOT_RANDOM));
+        test(new QuickSort());
+    }
+
     private void test(InPlaceSort sort) {
         test(sort.toFunctional());
     }
@@ -32,6 +39,7 @@ class SortTest {
         test(sort, new int[]{1, 2, 3}, new int[]{1, 2, 3});
         test(sort, new int[]{3, 2, 1}, new int[]{1, 2, 3});
         test(sort, new int[]{3, 2, 2, 1}, new int[]{1, 2, 2, 3});
+        test(sort, new int[]{1, 2, 1}, new int[]{1, 1, 2});
     }
 
     private void test(FunctionalSort sort, int[] arrayToSort, int[] expectedResult){
