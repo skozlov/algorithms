@@ -5,6 +5,7 @@ import com.github.skozlov.algorithms.util.Slice;
 
 import java.util.Comparator;
 
+import static com.github.skozlov.algorithms.util.ArrayUtils.newArray;
 import static java.lang.Math.min;
 
 public class MergeSort implements FunctionalSort {
@@ -13,7 +14,7 @@ public class MergeSort implements FunctionalSort {
     @Override
     public <T> T[] sort(T[] elements, Class<T> elementType, Comparator<T> comparator) {
         T[] source = ArrayUtils.copy(elements, elementType);
-        T[] target = ArrayUtils.create(elementType, elements.length);
+        T[] target = newArray(elementType, elements.length);
         for (int partSize = 1; partSize < elements.length; partSize *= 2) {
             for (int leftPartIndex = 0; leftPartIndex < elements.length; leftPartIndex += partSize * 2) {
                 int rightPartIndex = min(leftPartIndex + partSize, elements.length);
