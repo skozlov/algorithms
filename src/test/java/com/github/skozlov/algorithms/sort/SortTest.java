@@ -35,6 +35,11 @@ class SortTest {
         test(array -> CountingSort.sort(array, Function.identity(), Integer.class));
     }
 
+    @Test
+    void radixSort() {
+        test(array -> RadixSort.sort(array, Function.identity(), Integer.class));
+    }
+
     private void test(InPlaceSort sort) {
         test(sort.toFunctional());
     }
