@@ -39,35 +39,31 @@ class SortTest extends Test {
     }
   }
 
-  private def testInPlaceSort(
-      sort: InsertionSort.type,
-      stable: Boolean,
-  ): Unit = {
+  private def testInPlaceSort(sort: InPlaceSort): Unit = {
     val arrays: Seq[Array[(Int, Int)]] = cases map { _.toArray }
     val results: Seq[Seq[(Int, Int)]] = for (array <- arrays) yield {
-      sort.sort(in = array, out = array)
+      sort.sortInPlace(array)
       array.toSeq
     }
-    checkResults(results, stable)
+    checkResults(results, sort.isInstanceOf[StableSort])
   }
 
-  private def testImmutableInputSort(
-      sort: InsertionSort.type,
-      stable: Boolean,
-  ): Unit = {
+  private def testFunctionalSort(sort: FunctionalSort): Unit = {
     val inputsAndOutputsAfterSort: Seq[(Array[(Int, Int)], Array[(Int, Int)])] =
       for {
         _case: Seq[(Int, Int)] <- cases
         input: Array[(Int, Int)] = _case.toArray
-        output: Array[(Int, Int)] = Array.ofDim[(Int, Int)](_case.size)
-        _ = sort.sort(input, output)
+        output: Array[(Int, Int)] = sort.sortFunctionally(input)
       } yield (input, output)
-    checkResults(inputsAndOutputsAfterSort map { _._2.toSeq }, stable)
+    checkResults(
+      inputsAndOutputsAfterSort map { _._2.toSeq },
+      sort.isInstanceOf[StableSort],
+    )
     (inputsAndOutputsAfterSort map { _._1.toSeq }) shouldBe cases
   }
 
   test("insertion sort") {
-    testInPlaceSort(InsertionSort, stable = true)
-    testImmutableInputSort(InsertionSort, stable = true)
+    testInPlaceSort(InsertionSort)
+    testFunctionalSort(InsertionSort)
   }
 }

@@ -4,26 +4,17 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.math.Ordered.orderingToOrdered
 
-object InsertionSort {
-
-  /** Sorts the input sequence putting elements to the output sequence.
-    *
-    * The sequences may be independent (then the input sequence isn't modified)
-    * or be the same sequence (then in-place sort is performed).
-    *
-    * This sort is stable.
-    *
-    * Time consumption: O(n<sup>2</sup>).
-    *
-    * Memory consumption: O(1).
-    * @param in
-    *   input sequence which contains elements to sort
-    * @param out
-    *   output sequence to put sorted elements into
-    * @throws IllegalArgumentException
-    *   if the input and output sequences have different sizes
-    */
-  def sort[A: Ordering](
+/** Simple sorting algorithm that is efficient for small sequences.
+  *
+  * Time consumption: O(n<sup>2</sup>).
+  *
+  * Memory consumption: O(1).
+  *
+  * @see
+  *   [[https://en.wikipedia.org/wiki/Insertion_sort]]
+  */
+object InsertionSort extends InPlaceSort with FunctionalSort with StableSort {
+  private def sort[A: Ordering](
       in: collection.IndexedSeq[A],
       out: mutable.IndexedSeq[A],
   ): Unit = {
@@ -70,5 +61,18 @@ object InsertionSort {
         insert(i)
       }
     }
+  }
+
+  override def sortInPlace[A: Ordering](
+      elements: mutable.IndexedSeq[A]
+  ): Unit = {
+    sort(in = elements, out = elements)
+  }
+
+  override def sortFunctionally[A: Ordering](
+      in: collection.IndexedSeq[A],
+      out: mutable.IndexedSeq[A],
+  ): Unit = {
+    sort(in, out)
   }
 }
