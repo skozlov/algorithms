@@ -1,6 +1,7 @@
 package com.github.skozlov.algorithms.sort
 
-import com.github.skozlov.algorithms.Test
+import com.github.skozlov.Test
+import com.github.skozlov.commons.collection.{Slice, WritableSlice}
 
 class SortTest extends Test {
   private val cases: Seq[Seq[(Int, Int)]] = {
@@ -42,7 +43,7 @@ class SortTest extends Test {
   private def testInPlaceSort(sort: InPlaceSort): Unit = {
     val arrays: Seq[Array[(Int, Int)]] = cases map { _.toArray }
     val results: Seq[Seq[(Int, Int)]] = for (array <- arrays) yield {
-      sort.sortInPlace(array)
+      sort.sortInPlace(WritableSlice(array)())
       array.toSeq
     }
     checkResults(results, sort.isInstanceOf[StableSort])
@@ -53,7 +54,7 @@ class SortTest extends Test {
       for {
         _case: Seq[(Int, Int)] <- cases
         input: Array[(Int, Int)] = _case.toArray
-        output: Array[(Int, Int)] = sort.sortFunctionally(input)
+        output: Array[(Int, Int)] = sort.sortFunctionally(Slice(input)())
       } yield (input, output)
     checkResults(
       inputsAndOutputsAfterSort map { _._2.toSeq },

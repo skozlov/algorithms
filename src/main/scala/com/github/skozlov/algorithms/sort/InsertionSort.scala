@@ -1,7 +1,8 @@
 package com.github.skozlov.algorithms.sort
 
+import com.github.skozlov.commons.collection.{Slice, WritableSlice}
+
 import scala.annotation.tailrec
-import scala.collection.mutable
 import scala.math.Ordered.orderingToOrdered
 
 /** Simple sorting algorithm that is efficient for small sequences.
@@ -14,10 +15,7 @@ import scala.math.Ordered.orderingToOrdered
   *   [[https://en.wikipedia.org/wiki/Insertion_sort]]
   */
 object InsertionSort extends InPlaceSort with FunctionalSort with StableSort {
-  private def sort[A: Ordering](
-      in: collection.IndexedSeq[A],
-      out: mutable.IndexedSeq[A],
-  ): Unit = {
+  private def sort[A: Ordering](in: Slice[A], out: WritableSlice[A]): Unit = {
     require(
       in.size == out.size,
       s"in and out have different sizes: ${in.size} and ${out.size}",
@@ -63,15 +61,13 @@ object InsertionSort extends InPlaceSort with FunctionalSort with StableSort {
     }
   }
 
-  override def sortInPlace[A: Ordering](
-      elements: mutable.IndexedSeq[A]
-  ): Unit = {
+  override def sortInPlace[A: Ordering](elements: WritableSlice[A]): Unit = {
     sort(in = elements, out = elements)
   }
 
   override def sortFunctionally[A: Ordering](
-      in: collection.IndexedSeq[A],
-      out: mutable.IndexedSeq[A],
+      in: Slice[A],
+      out: WritableSlice[A],
   ): Unit = {
     sort(in, out)
   }

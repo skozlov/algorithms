@@ -1,7 +1,7 @@
 package com.github.skozlov.algorithms.sort
 
-import scala.collection.mutable
+import com.github.skozlov.commons.collection.WritableSlice
 
 trait InPlaceSort {
-  def sortInPlace[A: Ordering](elements: mutable.IndexedSeq[A]): Unit
+  def sortInPlace[A: Ordering](elements: WritableSlice[A]): Unit
 }
