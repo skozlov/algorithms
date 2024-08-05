@@ -12,7 +12,7 @@ trait SliceOps[
 ] extends IndexedSeqView[A] {
   this: SubSlice =>
 
-  import SliceOps._
+  import SliceOps.*
 
   def underlying: Underlying
   def from: Int
@@ -59,6 +59,52 @@ trait SliceOps[
   override def takeRight(n: Int): SubSlice = drop(length - math.max(n, 0))
 
   override def dropRight(n: Int): SubSlice = take(length - math.max(n, 0))
+
+  override def tail: SubSlice = {
+    if (isEmpty) {
+      throw new UnsupportedOperationException("Empty Slice doesn't have .tail")
+    }
+    drop(1)
+  }
+
+  override def init: SubSlice = {
+    if (isEmpty) {
+      throw new UnsupportedOperationException("Empty Slice doesn't have .init")
+    }
+    dropRight(1)
+  }
+
+  override def tails: Iterator[SubSlice] = {
+    for (numDrop <- Iterator.range(0, length + 1)) yield drop(numDrop)
+  }
+
+  override def inits: Iterator[SubSlice] = {
+    for (numDrop <- Iterator.range(0, length + 1)) yield dropRight(numDrop)
+  }
+
+  override def sliding(size: Int, step: Int): Iterator[SubSlice] = {
+    require(size >= 1, s"Too small size: $size")
+    require(step >= 1, s"Too small step: $step")
+    Iterator
+      .iterate(0 until size) { range =>
+        (range.start + step) until (range.end + step)
+      }
+      .takeWhile { _.start < length }
+      .map { range =>
+        this.slice(
+          from = range.start,
+          until = math.min(range.end, length),
+        )
+      }
+  }
+
+  override def sliding(size: Int): Iterator[SubSlice] = {
+    sliding(size, step = 1)
+  }
+
+  override def grouped(size: Int): Iterator[SubSlice] = {
+    sliding(size, step = size)
+  }
 }
 
 object SliceOps {
