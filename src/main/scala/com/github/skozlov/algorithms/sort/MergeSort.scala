@@ -15,9 +15,7 @@ import scala.math.Ordered.orderingToOrdered
   * @see
   *   [[https://en.wikipedia.org/wiki/Merge_sort]]
   */
-class MergeSort[A] {
-  import MergeSort._
-  
+class MergeSort[A](val smallChunkSize: Int, val smallChunkSort: FunctionalSort[A]) {
   // noinspection ScalaWeakerAccess
   @tailrec
   final def merge(
@@ -38,11 +36,10 @@ class MergeSort[A] {
     }
   }
 
-  def sortWithBuffers(
+  def sort(
       input: Slice[A],
       primaryBuffer: WritableSlice[A],
       secondaryBuffer: WritableSlice[A],
-      smallChunkSort: SmallChunkSort[A] = SmallChunkSort(chunkSize = 5, sort = InsertionSort[A]),
   )(implicit ordering: Ordering[A]): WritableSlice[A] = {
     require(
       primaryBuffer.size == input.size,
@@ -95,46 +92,37 @@ class MergeSort[A] {
     } else if (input.size == 1) {
       primaryBuffer(0) = input(0)
       primaryBuffer
-    } else if (smallChunkSort.chunkSize <= 1) {
+    } else if (smallChunkSize <= 1) {
       sort(input, primaryBuffer, secondaryBuffer, sortedChunkSize = 1)
     } else {
       val inChunks: Iterator[Slice[A]] =
-        input.grouped(size = smallChunkSort.chunkSize)
+        input.grouped(size = smallChunkSize)
       val outChunks: Iterator[WritableSlice[A]] =
-        primaryBuffer.grouped(size = smallChunkSort.chunkSize)
+        primaryBuffer.grouped(size = smallChunkSize)
       for ((in, out) <- inChunks zip outChunks) {
-        smallChunkSort.sort.sortFunctionally(in, out)
+        smallChunkSort.sortFunctionally(in, out)
       }
-      if (smallChunkSort.chunkSize >= input.size) {
+      if (smallChunkSize >= input.size) {
         primaryBuffer
       } else {
         sort(
           input = primaryBuffer,
           primaryBuffer = secondaryBuffer,
           secondaryBuffer = primaryBuffer,
-          sortedChunkSize = smallChunkSort.chunkSize,
+          sortedChunkSize = smallChunkSize,
         )
       }
     }
   }
 
-  def sortWithBuffer(
+  def sort(
       input: WritableSlice[A],
       buffer: WritableSlice[A],
-      smallChunkSort: SmallChunkSort[A] =
-        SmallChunkSort(chunkSize = 5, sort = InsertionSort[A]),
   )(implicit ordering: Ordering[A]): WritableSlice[A] = {
-    sortWithBuffers(
+    sort(
       input = input,
       primaryBuffer = buffer,
       secondaryBuffer = input,
-      smallChunkSort = smallChunkSort,
     )
-  }
-}
-
-object MergeSort {
-  class SmallChunkSort[A](val chunkSize: Int, val sort: FunctionalSort[A]) {
-    require(chunkSize >= 0, "Negative chunk size: " + chunkSize)
   }
 }
