@@ -15,14 +15,16 @@ import scala.math.Ordered.orderingToOrdered
   * @see
   *   [[https://en.wikipedia.org/wiki/Merge_sort]]
   */
-object MergeSort {
+class MergeSort[A] {
+  import MergeSort._
+  
   // noinspection ScalaWeakerAccess
   @tailrec
-  def merge[A: Ordering](
+  final def merge(
       in1: Slice[A],
       in2: Slice[A],
       out: WritableSlice[A],
-  ): Unit = {
+  )(implicit ordering: Ordering[A]): Unit = {
     require(
       out.size == in1.size + in2.size,
       s"out size = ${out.size} is not sum of in1 size = ${in1.size} and in2 size = ${in2.size}",
@@ -36,17 +38,12 @@ object MergeSort {
     }
   }
 
-  class SmallChunkSort(val chunkSize: Int, val sort: FunctionalSort) {
-    require(chunkSize >= 0, "Negative chunk size: " + chunkSize)
-  }
-
-  def sortWithBuffers[A: Ordering](
+  def sortWithBuffers(
       input: Slice[A],
       primaryBuffer: WritableSlice[A],
       secondaryBuffer: WritableSlice[A],
-      smallChunkSort: SmallChunkSort =
-        SmallChunkSort(chunkSize = 5, sort = InsertionSort),
-  ): WritableSlice[A] = {
+      smallChunkSort: SmallChunkSort[A] = SmallChunkSort(chunkSize = 5, sort = InsertionSort[A]),
+  )(implicit ordering: Ordering[A]): WritableSlice[A] = {
     require(
       primaryBuffer.size == input.size,
       s"Size mismatch: input = ${input.size}, primary buffer = ${primaryBuffer.size}",
@@ -121,17 +118,23 @@ object MergeSort {
     }
   }
 
-  def sortWithBuffer[A: Ordering](
+  def sortWithBuffer(
       input: WritableSlice[A],
       buffer: WritableSlice[A],
-      smallChunkSort: SmallChunkSort =
-        SmallChunkSort(chunkSize = 5, sort = InsertionSort),
-  ): WritableSlice[A] = {
+      smallChunkSort: SmallChunkSort[A] =
+        SmallChunkSort(chunkSize = 5, sort = InsertionSort[A]),
+  )(implicit ordering: Ordering[A]): WritableSlice[A] = {
     sortWithBuffers(
       input = input,
       primaryBuffer = buffer,
       secondaryBuffer = input,
       smallChunkSort = smallChunkSort,
     )
+  }
+}
+
+object MergeSort {
+  class SmallChunkSort[A](val chunkSize: Int, val sort: FunctionalSort[A]) {
+    require(chunkSize >= 0, "Negative chunk size: " + chunkSize)
   }
 }

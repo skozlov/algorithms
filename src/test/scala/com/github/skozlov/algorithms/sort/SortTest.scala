@@ -40,7 +40,7 @@ class SortTest extends Test {
     }
   }
 
-  private def testInPlaceSort(sort: InPlaceSort): Unit = {
+  private def testInPlaceSort(sort: InPlaceSort[(Int, Int)]): Unit = {
     val arrays: Seq[Array[(Int, Int)]] = cases map { _.toArray }
     val results: Seq[Seq[(Int, Int)]] = for (array <- arrays) yield {
       sort.sortInPlace(WritableSlice(array)())
@@ -49,7 +49,7 @@ class SortTest extends Test {
     checkResults(results, sort.isInstanceOf[StableSort])
   }
 
-  private def testFunctionalSort(sort: FunctionalSort): Unit = {
+  private def testFunctionalSort(sort: FunctionalSort[(Int, Int)]): Unit = {
     val inputsAndOutputsAfterSort: Seq[(Array[(Int, Int)], Array[(Int, Int)])] =
       for {
         _case: Seq[(Int, Int)] <- cases
@@ -64,7 +64,7 @@ class SortTest extends Test {
   }
 
   test("insertion sort") {
-    testInPlaceSort(InsertionSort)
-    testFunctionalSort(InsertionSort)
+    testInPlaceSort(InsertionSort())
+    testFunctionalSort(InsertionSort())
   }
 }

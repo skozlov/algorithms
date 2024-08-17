@@ -14,8 +14,8 @@ import scala.math.Ordered.orderingToOrdered
   * @see
   *   [[https://en.wikipedia.org/wiki/Insertion_sort]]
   */
-object InsertionSort extends InPlaceSort with FunctionalSort with StableSort {
-  private def sort[A: Ordering](in: Slice[A], out: WritableSlice[A]): Unit = {
+class InsertionSort[A] extends InPlaceSort[A] with FunctionalSort[A] with StableSort {
+  private def sort(in: Slice[A], out: WritableSlice[A])(implicit ordering: Ordering[A]): Unit = {
     require(
       in.size == out.size,
       s"in and out have different sizes: ${in.size} and ${out.size}",
@@ -61,14 +61,14 @@ object InsertionSort extends InPlaceSort with FunctionalSort with StableSort {
     }
   }
 
-  override def sortInPlace[A: Ordering](elements: WritableSlice[A]): Unit = {
+  override def sortInPlace(elements: WritableSlice[A])(implicit ordering: Ordering[A]): Unit = {
     sort(in = elements, out = elements)
   }
 
-  override def sortFunctionally[A: Ordering](
+  override def sortFunctionally(
       in: Slice[A],
       out: WritableSlice[A],
-  ): Unit = {
+  )(implicit ordering: Ordering[A]): Unit = {
     sort(in, out)
   }
 }

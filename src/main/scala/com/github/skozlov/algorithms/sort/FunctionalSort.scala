@@ -7,7 +7,7 @@ import scala.reflect.ClassTag
 /** Sort which puts ordered elements into the output sequence and does not
   * modify the input sequence.
   */
-trait FunctionalSort {
+trait FunctionalSort[A] {
 
   /** Sorts the input sequence putting elements into the output sequence. Input
     * sequence will not be modified.
@@ -19,7 +19,7 @@ trait FunctionalSort {
     * @throws IllegalArgumentException
     *   if the input and output sequences have different sizes
     */
-  def sortFunctionally[A: Ordering](in: Slice[A], out: WritableSlice[A]): Unit
+  def sortFunctionally(in: Slice[A], out: WritableSlice[A])(implicit ordering: Ordering[A]): Unit
 
   /** Sorts the input sequence putting elements into the new array. Input
     * sequence will not be modified.
@@ -28,7 +28,7 @@ trait FunctionalSort {
     * @return
     *   array which contains sorted elements
     */
-  def sortFunctionally[A: Ordering: ClassTag](in: Slice[A]): Array[A] = {
+  def sortFunctionally(in: Slice[A])(implicit ordering: Ordering[A], classTag: ClassTag[A]): Array[A] = {
     val out = Array.ofDim[A](in.size)
     sortFunctionally(in, WritableSlice(out)())
     out
