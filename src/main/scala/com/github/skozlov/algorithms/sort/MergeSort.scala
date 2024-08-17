@@ -15,8 +15,9 @@ import scala.math.Ordered.orderingToOrdered
   * @see
   *   [[https://en.wikipedia.org/wiki/Merge_sort]]
   */
-class MergeSort[A](val smallChunkSize: Int, val smallChunkSort: FunctionalSort[A]) {
-  // noinspection ScalaWeakerAccess
+class MergeSort[A](val smallChunkSize: Int = 5, val smallChunkSort: FunctionalSort[A] = InsertionSort()) {
+  require(smallChunkSize >= 0, "Negative smallChunkSize: " + smallChunkSize)
+
   @tailrec
   final def merge(
       in1: Slice[A],
